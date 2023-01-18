@@ -1,0 +1,14 @@
+version: '3.4'
+volumes:
+  node_modules:
+services:
+  app:
+    build:
+      context: .
+      target: builder
+    command: ['yarn', 'dev']
+    volumes:
+      - .:/app:cached
+      - node_modules:/app/node_modules
+    ports:
+      - "3000:3000"
