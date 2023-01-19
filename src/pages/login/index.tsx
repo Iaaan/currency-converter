@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
+import { useState } from 'react'
 import { Button, Center, Input, VStack  } from '@chakra-ui/react'
 import { useBoundStore } from '@/stores'
 
@@ -7,7 +6,6 @@ export default function Login() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const login = useBoundStore(state => state.login)
-  const router = useRouter()
 
   const handleLogin = async () => {
     await login({ username })

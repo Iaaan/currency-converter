@@ -1,4 +1,4 @@
-import { ChangeEvent, SyntheticEvent, useEffect, useMemo, useState } from 'react'
+import { ChangeEvent, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { useBoundStore } from '@/stores'

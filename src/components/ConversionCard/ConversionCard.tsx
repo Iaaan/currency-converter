@@ -1,4 +1,3 @@
-import { Box } from '@chakra-ui/react'
 import { Container, CurrencyText } from './ConversionCard.css'
 
 export interface ConversionCardProps {
