@@ -1,38 +1,82 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Currency Converter
 
-## Getting Started
+Basic currency conversion using a [free currency conversion api](https://github.com/fawazahmed0/currency-api) for Little Bear onboarding.
 
-First, run the development server:
+Built on:
+* [Next.js](https://nextjs.org)
+* [Chakra UI](https://chakra-ui.com)
+* [Styled Components](https://styled-components.com/)
+* [Zustand](https://github.com/pmndrs/zustand)
+
+Once running, you should be able to:
+- login (spoofed)
+- page through giant list of currencies
+- search currencies using text input
+- select 2 currencies to convert
+- logout
+
+## Local development
+
+### Using docker
+
+Install [Docker Desktop](https://docs.docker.com/desktop/) if you don't have it.
+
+Common docker commands for development are in the Makefile:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+# Build container and start next.js dev server on locahost:3000 using:
+make up
+
+# Stop container
+make down
+
+# Rebuild container
+make build
+
+# Drop into container shell (you can add dependencies without having use yarn on host here)
+make shell
+
+# Run linter
+make lint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Using VSCode Dev Container
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+Simply open project root in VSCode and follow the prompt. You'll need to install the Dev Containers extension if you don't have it already.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+This should build the container and start the dev server on localhost:3000, as well as provide a shell for the container in the terminal.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+### Without docker (on host)
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+```bash
+# Install dependencies from project root:
+yarn install
 
-## Learn More
+# Start up dev server:
+yarn dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Project structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+- src/
+  - components/ # reusable UI components and layouts.
+  - pages/ # typical next.js pages directory for routing.
+  - stores/ # zustand slices organized by topic, set to a global store.
+  - styles/global.css # a very basic global stylesheet.
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Design decisions
 
-## Deploy on Vercel
+### Login
+I wouldn't normally implement the logged in logic and routing using `useEffect` and zustand actions (see `src/components/Layout/Layout.tsx`) if there were an auth service. However, in the interest of time, I decided not to create api routes to spoof the login to allow use of server-side props to handle the redirects.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### State management and data fetching
+I always like to organize state by topic, and zustand makes this pretty easy using [their recommended slice pattern](https://github.com/pmndrs/zustand/blob/main/docs/guides/slices-pattern.md). The slices get added to a flat global store accessible by `import { useBoundStore } from '@/stores` (resolving to `src/stores/index.ts`). Although TypeScript adds a bit of boilerplate when working with zustand stores (especially slices), it's well worth it to ensure the selectors and returned types are correct.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+[SWR](https://swr.vercel.app/docs/with-nextjs) or a similar library would have simplified the data fetching in the application. I decided not to use it because zustand was a requirement, and using SWR would have made the zustand implementation pretty trivial. So all of the data fetching is done inside zustand actions.
+
+### Styling and layout
+This is where I probably spent the least amount of time. I relied on Chakra UI's out-of-the-box components as much as possible. I did find using Styled Components and Chakra UI at the same time to be a bit redundant because of Chakra UI's styled system, as well as Chakra having `@emotion/styled` as a dependency.
+
+That said, everything should have a pretty clear layout and be responsive.
