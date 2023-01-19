@@ -5,3 +5,6 @@ export const Header = styled.header`
   display: flex;
   justify-content: space-between;
 `
+export const Main = styled.main`
+  padding: 1rem;
+`
