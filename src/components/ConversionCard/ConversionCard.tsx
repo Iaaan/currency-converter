@@ -12,17 +12,19 @@ export default function ConversionCard({
   quote,
   conversion,
 }: ConversionCardProps) {
-  if (!base) return (
-    <Container>
-      <CurrencyText>Select base currency.</CurrencyText>
-    </Container>
-  )
-
   return (
     <Container>
-      <CurrencyText>{base ? `1 ${base} = ` : 'Select base currency.'}</CurrencyText>
+      { !base && <CurrencyText>Select base currency.</CurrencyText> }
+
+      { base &&
+        <>
+          <CurrencyText>1 {base}</CurrencyText>
+          <CurrencyText>=</CurrencyText>
+        </>
+      }
+
       { (quote && conversion) &&
-        <CurrencyText>{`${conversion} ${quote}`}</CurrencyText>
+        <CurrencyText>{`${conversion} ${quote}s`}</CurrencyText>
       }
     </Container>
   )

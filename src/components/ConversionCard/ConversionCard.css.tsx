@@ -6,10 +6,13 @@ export const Container = styled.div`
   border-radius: 4px;
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(0, 0, 0, 0.1);
+  text-align: center;
 `
 
 export const CurrencyText = styled.p`
-  display: inline;
-  font-size: 1.4rem;
+  display: inline-block;
+  vertical-align: middle;
+  padding: 0 0.25rem;
+  font-size: 1.2rem;
   font-weight: bold;
 `

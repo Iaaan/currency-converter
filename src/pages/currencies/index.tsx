@@ -1,17 +1,15 @@
-import { useEffect, useState } from 'react'
+import { ChangeEvent, SyntheticEvent, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { useBoundStore } from '@/stores'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { ConversionCard } from '@/components/ConversionCard'
-import { ArrowForwardIcon, ArrowBackIcon } from '@chakra-ui/icons'
+import { Pager } from '@/components/Pager'
 import {
   Box,
   Button,
-  Flex,
-  IconButton,
+  Input,
   SimpleGrid,
-  Text,
  } from '@chakra-ui/react'
 
 const PAGE_SIZE = 20
@@ -26,6 +24,8 @@ export default function Currencies() {
 
   // Local state for paging
   const [page, setPage] = useState(0)
+  // Local state for search input
+  const [search, setSearch] = useState('')
 
   // Selected currency query params
   const {c1, c2} = router.query
@@ -33,7 +33,6 @@ export default function Currencies() {
   const currency2 = c2?.toString()
 
   const numCurrencies = Object.keys(currencies).length
-  const numPages = Math.floor(numCurrencies / PAGE_SIZE)
 
   // Fetch all currencies if we haven't already.
   useEffect(() => {
@@ -54,8 +53,29 @@ export default function Currencies() {
     }
   }, [currency1, currency2, clearConversion, fetchConversion])
 
-  // Loading if there are no currencies.
-  if (numCurrencies === 0) return <LoadingSpinner />
+  // Memoized filter for search input on currencies.
+  const filterCurrencies = () => {
+    return Object.keys(currencies)
+      .filter(k => {
+        const text = `${k}${currencies[k]}`.toLowerCase()
+        const term = search.toLowerCase()
+
+        return text.includes(term)
+    })
+  }
+
+  const filteredCurrencies = useMemo(filterCurrencies, [search, currencies])
+
+  const numPages = Math.floor(filteredCurrencies.length / PAGE_SIZE)
+
+  // Handler for test search input
+  const onSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value)
+
+    if (page !== 0) {
+      setPage(0)
+    }
+  }
 
   // Paging handlers for prev/next buttons.
   const nextPage = () => {
@@ -71,7 +91,7 @@ export default function Currencies() {
   }
 
   // Subset of currency keys based on page number.
-  const currenciesOnPage = Object.keys(currencies)
+  const currenciesOnPage = filteredCurrencies
     .slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE)
 
   const getHref = (k: string) => {
@@ -79,6 +99,9 @@ export default function Currencies() {
       ? `/currencies/?c1=${currency1}&c2=${k}`
       : `/currencies/?c1=${k}`
   }
+
+  // Loading if there are no currencies.
+  if (numCurrencies === 0) return <LoadingSpinner />
 
   return (
     <>
@@ -88,10 +111,19 @@ export default function Currencies() {
         conversion={conversion}
       />
 
+      <Box marginBottom="1rem">
+        <Input
+          placeholder="Search currencies"
+          value={search}
+          onChange={onSearchChange}
+        />
+      </Box>
+
       <SimpleGrid
         columns={{ sm: 1, md: 2}}
         spacing="2"
         minH="32rem"
+        marginBottom="1rem"
         alignContent="start"
       >
         {currenciesOnPage.map(k => (
@@ -101,27 +133,12 @@ export default function Currencies() {
         ))}
       </SimpleGrid>
 
-      <Flex
-        justify="space-between"
-        maxW="34rem"
-        margin="0 auto"
-      >
-        <IconButton
-          aria-label="previous page"
-          icon={<ArrowBackIcon />}
-          onClick={prevPage}
-          isDisabled={page === 0}
-        />
-
-        <Text>{page + 1} / {numPages + 1}</Text>
-
-        <IconButton
-          aria-label="next page"
-          icon={<ArrowForwardIcon />}
-          onClick={nextPage}
-          isDisabled={page === numPages}
-        />
-      </Flex>
+      <Pager
+        page={page}
+        numPages={numPages}
+        onPrev={prevPage}
+        onNext={nextPage}
+      />
     </>
   )
 }

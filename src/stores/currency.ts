@@ -1,7 +1,6 @@
 import { StateCreator } from 'zustand'
 
 const API_BASE_URL = 'https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest'
-const API_GET_ALL_CURRENCIES = API_BASE_URL + 'currencies.json'
 
 export interface Currencies {
   [k: string]: string,
