@@ -1,6 +1,6 @@
 import { useBoundStore } from '@/stores'
 import { useEffect } from 'react'
-import { Spinner } from '@chakra-ui/react'
+import { LoadingSpinner } from '@/components/LoadingSpinner'
 
 export default function Currencies() {
   const currencies = useBoundStore(state => state.currencies)
@@ -15,7 +15,7 @@ export default function Currencies() {
   }, [noCurrencies, fetchAllCurrencies])
 
   if (noCurrencies) {
-    return <Spinner size="xl" />
+    return <LoadingSpinner />
   }
 
   return (
