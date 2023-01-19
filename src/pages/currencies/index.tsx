@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { useBoundStore } from '@/stores'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
+import { ConversionCard } from '@/components/ConversionCard'
 import { ArrowForwardIcon, ArrowBackIcon } from '@chakra-ui/icons'
 import {
   Box,
@@ -81,15 +82,16 @@ export default function Currencies() {
 
   return (
     <>
-      <Box height="5rem">
-        {currency1 && <Text as="span">{currencies[currency1]} </Text>}
-        {currency2 && <Text as="span">{'=>'} {currencies[currency2]} </Text>}
-        {conversion && <Text as="span">{conversion}</Text>}
-      </Box>
+      <ConversionCard
+        base={currency1 && currencies[currency1]}
+        quote={currency2 && currencies[currency2]}
+        conversion={conversion}
+      />
+
       <SimpleGrid
         columns={{ sm: 1, md: 2}}
         spacing="2"
-        minH="37rem"
+        minH="32rem"
         alignContent="start"
       >
         {currenciesOnPage.map(k => (
