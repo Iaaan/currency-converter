@@ -12,7 +12,7 @@ export default function Currencies() {
     if (noCurrencies) {
       fetchAllCurrencies()
     }
-  }, [currencies])
+  }, [noCurrencies, fetchAllCurrencies])
 
   if (noCurrencies) {
     return <Spinner size="xl" />
