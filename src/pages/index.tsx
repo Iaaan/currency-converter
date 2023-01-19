@@ -1,16 +1,20 @@
 import { useEffect } from 'react'
+import { useRouter } from 'next/router'
 import Head from 'next/head'
 import { useBoundStore } from '../stores'
+import { Spinner, Center } from '@chakra-ui/react'
 
 export default function Home() {
-  const currencies = useBoundStore(state => state.currencies)
-  const fetchAllCurrencies = useBoundStore(state => state.fetchAllCurrencies)
-
+  const username = useBoundStore(state => state.username)
+  const router = useRouter()
+  
   useEffect(() => {
-    if (Object.keys(currencies).length === 0) {
-      fetchAllCurrencies()
+    if (!username) {
+      router.push('/login')
+    } else {
+      router.push('/currencies')
     }
-  }, [currencies])
+  }, [username, router])
 
   return (
     <>
@@ -20,7 +24,9 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main>{JSON.stringify(currencies)}</main>
+      <Center height="50vh">
+        <Spinner size="xl" />
+      </Center>
     </>
   )
 }
